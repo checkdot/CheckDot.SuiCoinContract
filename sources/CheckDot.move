@@ -1,18 +1,10 @@
-module cdt::cdt {
+module cdtToken::cdt {
     use std::option;
     use sui::coin::{Self, Coin, TreasuryCap, CoinMetadata};
     use sui::tx_context::{Self, TxContext};
     use sui::transfer;
     use sui::url;
 
-    /// coin DECIMALS
-    const DECIMALS: u8 = 8;
-    /// pow(10,8) = 10**8
-    const DECIMAL_TOTAL: u64 = 100000000;
-    /// 10 million
-    const MAX_SUPPLY_AMOUNT: u64 = 10000000;
-
-    /// Error codes
     const ERR_NOT_ADMIN: u64 = 0x10004;
 
     const IconUrl: vector<u8> = b"https://checkdot.io/token-256x256.png";
@@ -21,7 +13,7 @@ module cdt::cdt {
 
     fun init(witness: CDT, ctx: &mut TxContext) {
         assert_admin_signer(ctx);
-        let (treasury_cap, metadata) = create_and_mint(witness, 100000000, ctx);
+        let (treasury_cap, metadata) = create_and_mint(witness, 9897808000000, ctx); // 9 897 808
         transfer::public_freeze_object(metadata);
         transfer::public_share_object(treasury_cap);
     }
@@ -48,7 +40,7 @@ module cdt::cdt {
             witness,
             6, // decimals
             b"CDT", // symbol
-            b"CheckDot Coin", // name
+            b"CheckDot", // name
             b"", // description
             option::some(icon_url), // icon_url
             ctx
@@ -70,7 +62,7 @@ module cdt::cdt {
     }
 
     /// helper must admin
-    fun assert_admin_signer(ctx: &mut TxContext) { assert!(tx_context::sender(ctx) == @cdt, ERR_NOT_ADMIN); }
+    fun assert_admin_signer(ctx: &TxContext) { assert!(tx_context::sender(ctx) == @cdt, ERR_NOT_ADMIN); }
 
     #[test_only]
     public fun init_for_testing(ctx: &mut TxContext) {
@@ -79,11 +71,11 @@ module cdt::cdt {
 }
 
 #[test_only]
-module cdt::cdt_tests {
+module cdtToken::cdt_tests {
 
     use sui::coin::{Self, TreasuryCap};
     use sui::test_scenario::{Self, Scenario, next_tx};
-    use cdt::cdt::{Self, CDT};
+    use cdtToken::cdt::{Self, CDT};
 
     #[test]
     fun test_burn_() {
